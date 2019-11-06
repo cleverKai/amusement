@@ -7,13 +7,13 @@
             <li>古诗</li>
             <li>新闻</li>
         </ul>
-        <div v-if=" $store.state.user.username ? false : true " class="user">
+        <div v-if="isLogin"  class="user">
             <div @click="handleToLogin">登录</div>
             <p>|</p>
-            <div>注册</div>
+            <div @click="handleToLogin">注册</div>
         </div>
-        <div class="user">
-            <p>欢迎您：{{ $store.state.user.username }}</p>
+        <div v-else class="user">
+            <p>欢迎您：{{ username }}</p>
             <div @click="Logout">退出</div>
         </div>
     </div>
@@ -24,8 +24,18 @@
         name: "Header",
         data(){
             return{
-                // isLogin : true
+                isLogin : true,
+                username:'',
             }
+        },
+        mounted(){
+            this.$axios.get('/api2/users/getUser').then((res) =>{
+                let status = res.data.status;
+                if(status === 0){
+                    this.isLogin = false;
+                    this.username = res.data.data.username;
+                }
+            });
         },
         methods:{
             handleToLogin(){
@@ -46,7 +56,7 @@
                     }
                 })
             }
-        }
+        },
     }
 </script>
 
